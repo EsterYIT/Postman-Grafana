@@ -1,0 +1,332 @@
+{
+	"info": {
+		"_postman_id": "bac04d8b-87cf-4074-a58a-80b5adf633bb",
+		"name": "Grafana",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26248150"
+	},
+	"item": [
+		{
+			"name": "Get Teams",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Verify team name\", function () {\r",
+							"    var jsonData = pm.response.json()\r",
+							"    pm.expect(jsonData.teams[0].name).to.equal(\"Test\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/teams/search",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"teams",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Team",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.sendRequest({\r",
+							"    url: 'http://localhost:3000/api/teams/search',\r",
+							"    method: 'GET',\r",
+							"    header: {\r",
+							"        'content-type': 'application/json',\r",
+							"        'authorization': request.headers[\"authorization\"]\r",
+							"    },\r",
+							"}, (function (err, res){\r",
+							"    pm.test(\"Verify New Team Creation\",function(){\r",
+							"    var jsonData = res.json()\r",
+							"    pm.expect(jsonData.teams[0].name).to.equal(\"Postman\")\r",
+							"    })\r",
+							"}));\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Postman\",\r\n    \"email\": \"es@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/teams",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"teams"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Team Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"var data = pm.response.json()\r",
+							"var id = data.teams[1].id\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"    url: 'http://localhost:3000/api/teams/'+id,\r",
+							"    method: 'PUT',\r",
+							"    header: {\r",
+							"        'content-type': 'application/json',\r",
+							"        'authorization': request.headers[\"authorization\"]\r",
+							"    },  \r",
+							"     body: {\r",
+							"     mode: 'raw',\r",
+							"     raw: JSON.stringify({'name': 'Test6', 'email': 'li123@gmail.com'})\r",
+							"    }\r",
+							" });\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"    \r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/teams/search",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"teams",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Team Updated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"    var data = pm.response.json()\r",
+							"\r",
+							"    pm.test(\"Verify Teama Updated\",function(){\r",
+							"    pm.expect(data.teams[1].name).to.equal(\"Test6\")\r",
+							"    });\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/teams/search",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"teams",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Team",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"var data = pm.response.json()\r",
+							"var id = data.teams[0].id\r",
+							"var total = data.totalCount\r",
+							"pm.globals.set(\"totalTeams\",total)\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"    url: 'http://localhost:3000/api/teams/'+id,\r",
+							"    method: 'DELETE',\r",
+							"    header: {\r",
+							"        'content-type': 'application/json',\r",
+							"        'authorization': request.headers[\"authorization\"]\r",
+							"    },\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/teams/search",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"teams",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Team Deleted",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"    var total = pm.globals.get(\"totalTeams\")\r",
+							"    var data = pm.response.json()\r",
+							"\r",
+							"    pm.test(\"Verify Team Delated\", function(){\r",
+							"    pm.expect(data.totalCount).to.equal(total-1)\r",
+							"    })\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/teams/search",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"teams",
+						"search"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "admin",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "admin",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
